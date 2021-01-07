@@ -22,6 +22,9 @@ QPushButton{
 Alime_TitleBar> QPushButton:hover{
     background:rgba(255,255,255,50);
 }
+QPushButton#closeButton:hover{
+    background:rgba(255,0,0,255);
+}
 
 QWidget#leftContent{
     background-color: rgb(240,240,240);

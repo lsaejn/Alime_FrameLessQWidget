@@ -76,17 +76,24 @@ void Alime_TitleBar::mousePressEvent(QMouseEvent* event)
     if (ReleaseCapture() && event->button()== Qt::LeftButton)
     {
         IsNcPressing_ = true;
+        static ULONGLONG lastClick = -1;
+        ULONGLONG thisClick = GetTickCount64();
+        ULONGLONG interval = thisClick - lastClick;
+        lastClick = thisClick;
+        if (interval < 200)
+        {
+            emit maximizeButton_->clicked();
+        }
     }
     event->ignore();
 #else
 #endif
 }
-#include <QDebug>
+
 void Alime_TitleBar::mouseMoveEvent(QMouseEvent* event)
 {
     if (IsNcPressing_)
     {
-        qDebug() << "mouseMoveEvent";
         PostMessage(HWND(this->window()->winId()), WM_NCLBUTTONDOWN, HTCAPTION, 0);
     }
 }
@@ -95,19 +102,14 @@ void Alime_TitleBar::mouseMoveEvent(QMouseEvent* event)
 void Alime_TitleBar::mouseReleaseEvent(QMouseEvent* event)
 {
 #ifdef Q_OS_WIN
+    if (event->button() != Qt::LeftButton)
+        return;
     if (IsNcPressing_ )
     {
         event->ignore();
     }
     IsNcPressing_ = false;
-    static ULONGLONG lastClick = -1;
-    ULONGLONG thisClick = GetTickCount64();
-    ULONGLONG interval = thisClick - lastClick;
-    lastClick = thisClick;
-    if (interval < 500)
-    {
-        emit maximizeButton_->clicked();
-    }
+
 #else
 #endif
 }
@@ -193,7 +195,6 @@ void Alime_TitleBar::updateMaximize()
         {
             maximizeButton_->setIcon(QIcon(":/images/reset.png"));
             maximizeButton_->setObjectName("resetButton");
-            qDebug() << "fuck2";
         }
         else
         {
@@ -205,9 +206,9 @@ void Alime_TitleBar::updateMaximize()
 
 void Alime_TitleBar::InitPushButton()
 {
-    Alime_TitlePushButton::InitPushButton(minimizeButton_, ":/images/min.png", "Minimize", "minimizeButton", 40, 32);
-    Alime_TitlePushButton::InitPushButton(maximizeButton_, ":/images/max.png", "Maximize", "maximizeButton", 40, 32);
-    Alime_TitlePushButton::InitPushButton(closeButton_, ":/images/close.png", "Close", "closeButton", 40, 32);
+    Alime_TitlePushButton::InitPushButton(minimizeButton_, ":/images/min.png", "Minimize", "minimizeButton", 40, 24);
+    Alime_TitlePushButton::InitPushButton(maximizeButton_, ":/images/max.png", "Maximize", "maximizeButton", 40, 24);
+    Alime_TitlePushButton::InitPushButton(closeButton_, ":/images/close.png", "Close", "closeButton", 40, 24);
 
     connect(minimizeButton_, SIGNAL(clicked(bool)), this, SLOT(onClicked()));
     connect(maximizeButton_, SIGNAL(clicked(bool)), this, SLOT(onClicked()));
@@ -228,14 +229,3 @@ void Alime_TitleBar::appWindowMoved()
     maximizeButton_->setIcon(QIcon(":/images/max.png"));
     maximizeButton_->setObjectName("maximizeButton");
 }
-
-//#include <QStyleOption>
-//#include <QPainter>
-//void Alime_TitleBar::paintEvent(QPaintEvent* event)
-//{
-    //Q_UNUSED(event);
-    //QStyleOption styleOpt;
-    //styleOpt.init(this);
-    //QPainter painter(this);
-    //style()->drawPrimitive(QStyle::PE_Widget, &styleOpt, &painter, this);
-//}

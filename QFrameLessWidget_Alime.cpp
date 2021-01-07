@@ -10,7 +10,6 @@ CLASSREGISTER(QFrameLessWidget_Alime)
 QFrameLessWidget_Alime::QFrameLessWidget_Alime(QWidget *parent)
     : Alime_ContentWidget(parent)
 {
-    //return;
     QHBoxLayout* contentLayout = new QHBoxLayout(this);
     QWidget* leftContent = new QWidget(this);
     QWidget* rightContent = new QWidget(this);

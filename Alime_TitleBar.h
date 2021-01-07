@@ -11,8 +11,6 @@ class QPushButton;
 class Alime_TitleBar : public QWidget
 {
     Q_OBJECT
-signals:
-    void WindowStateChanged(bool maxed);
 
 public:
     explicit Alime_TitleBar(QWidget* parent = 0);
