@@ -66,6 +66,7 @@ QFrameLessWidget_Alime::QFrameLessWidget_Alime(QWidget *parent)
 }
 
 #include <QPainter>
+#include <QPainterPath>
 void QFrameLessWidget_Alime::paintEvent(QPaintEvent* event)
 {
     //Alime_ContentWidget::paintEvent(event);

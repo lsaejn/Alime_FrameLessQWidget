@@ -11,9 +11,9 @@ signals:
 
 public:
     Alime_TransparentWidget(QWidget* parent = Q_NULLPTR);
-    virtual bool nativeEvent(const QByteArray& eventType, void* message, long* result);
     void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
+    virtual bool nativeEvent(const QByteArray& eventType, void* message, long* result);
 private:
-    size_t boundaryWidth;
-    Alime_WindowBase* base;
+    size_t boundaryWidth_;
+    Alime_WindowBase* base_;
 };

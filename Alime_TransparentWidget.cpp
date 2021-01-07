@@ -5,27 +5,30 @@
 #include <windows.h>        //注意头文件
 #include <windowsx.h>
 #include <QMouseEvent>
+#include <QPainterPath>
+#include <QPainter>
+#include <QtMath>
 
 Alime_TransparentWidget::Alime_TransparentWidget(QWidget* parent)
 	:QWidget(parent),
-    boundaryWidth(5)
+    boundaryWidth_(8)
 {
     setAttribute(Qt::WA_TranslucentBackground, true);
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
     //阴影
-    QGraphicsDropShadowEffect* shadow = new QGraphicsDropShadowEffect(this);
-    shadow->setObjectName("border");
-    shadow->setOffset(0, 0);
-    shadow->setColor(QColor("#FF444444"));
-    //阴影圆角
-    shadow->setBlurRadius(10);
+    //QGraphicsDropShadowEffect* shadow = new QGraphicsDropShadowEffect(this);
+    //shadow->setObjectName("border");
+    //shadow->setOffset(0, 0);
+    //shadow->setColor(QColor("#FF444444"));
+    //shadow->setBlurRadius(10);
+
+
     QVBoxLayout* box = new QVBoxLayout(this);
-    base= new Alime_WindowBase(this, box);
+    base_= new Alime_WindowBase(this, box);
+    //base_->setGraphicsEffect(shadow);
     
-    box->addWidget(base);
-    //给嵌套QWidget设置阴影
-    //base->setGraphicsEffect(shadow);
+    box->addWidget(base_);
     box->setMargin(5);
 }
 
@@ -33,8 +36,6 @@ Alime_TransparentWidget::Alime_TransparentWidget(QWidget* parent)
 bool Alime_TransparentWidget::nativeEvent(const QByteArray& eventType, void* message, long* result)
 {
     MSG* msg = (MSG*)message;
-    auto w=width();
-    auto h = height();
     switch (msg->message)
     {
     case WM_MOVE:
@@ -45,36 +46,34 @@ bool Alime_TransparentWidget::nativeEvent(const QByteArray& eventType, void* mes
     case WM_NCHITTEST:
         int xPos = GET_X_LPARAM(msg->lParam) - this->frameGeometry().x();
         int yPos = GET_Y_LPARAM(msg->lParam) - this->frameGeometry().y();
-        if (xPos < boundaryWidth && yPos < boundaryWidth)                    //左上角
+        if (xPos < boundaryWidth_ && yPos < boundaryWidth_) 
             *result = HTTOPLEFT;
-        else if (xPos >= width() - boundaryWidth && yPos < boundaryWidth)          //右上角
+        else if (xPos >= width() - boundaryWidth_ && yPos < boundaryWidth_)
             *result = HTTOPRIGHT;
-        else if (xPos < boundaryWidth && yPos >= height() - boundaryWidth)         //左下角
+        else if (xPos < boundaryWidth_ && yPos >= height() - boundaryWidth_)
             *result = HTBOTTOMLEFT;
-        else if (xPos >= width() - boundaryWidth && yPos >= height() - boundaryWidth)//右下角
+        else if (xPos >= width() - boundaryWidth_ && yPos >= height() - boundaryWidth_)
             *result = HTBOTTOMRIGHT;
-        else if (xPos < boundaryWidth)                                     //左边
+        else if (xPos < boundaryWidth_)
             *result = HTLEFT;
-        else if (xPos >= width() - boundaryWidth)                              //右边
+        else if (xPos >= width() - boundaryWidth_)
             *result = HTRIGHT;
-        else if (yPos < boundaryWidth)                                       //上边
+        else if (yPos < boundaryWidth_)
             *result = HTTOP;
-        else if (yPos >= height() - boundaryWidth)                             //下边
+        else if (yPos >= height() - boundaryWidth_)
             *result = HTBOTTOM;
-        else              //其他部分不做处理，返回false，留给其他事件处理器处理
+        else
             return false;
         return true;
     }
-    return false;         //此处返回false，留给其他事件处理器处理
+    return false;
 }
 
-#include <QPainter>
-#include <QtMath>
 void Alime_TransparentWidget::paintEvent(QPaintEvent* event)
 {
     QPainterPath path;
     path.setFillRule(Qt::WindingFill);
-    QRectF rect(10, 10, this->width() - 20, this->height() - 20);
+    QRectF rect(10, 10, qreal(this->width()) - 20, qreal(this->height()) - 20);
     path.addRoundRect(rect, 8, 8);
 
     QPainter painter(this);
@@ -82,7 +81,8 @@ void Alime_TransparentWidget::paintEvent(QPaintEvent* event)
     painter.fillPath(path, QBrush(Qt::white));
 
     QColor color(0, 0, 0, 50);
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; i++)
+    {
         QPainterPath path;
         path.setFillRule(Qt::WindingFill);
         path.addRect(10 - i, 10 - i, this->width() - (10 - i) * 2, this->height() - (10 - i) * 2);

@@ -20,6 +20,7 @@ Alime_WindowBase::Alime_WindowBase(QWidget* parent, QLayout* ownerBox)
     box_(ownerBox)
 {
     //¿Í»§Çø
+    setAttribute(Qt::WA_StyledBackground, true);
     auto content = Alime_ContentWidget::creator_(this);
 
     titleBar_ = new Alime_TitleBar(this);
@@ -31,10 +32,10 @@ Alime_WindowBase::Alime_WindowBase(QWidget* parent, QLayout* ownerBox)
     setWindowIcon(QIcon(content->GetIcon()));
     parentWidget()->resize(content->GetWindowSize());
 
-    QPalette pal(palette());
-    pal.setColor(QPalette::Background, QColor(255,255,255));
-    setAutoFillBackground(true);
-    setPalette(pal);
+    //QPalette pal(palette());
+    //pal.setColor(QPalette::Background, QColor(255,255,255));
+    //setAutoFillBackground(true);
+    //setPalette(pal);
 
     QVBoxLayout* pLayout = new QVBoxLayout();
     pLayout->addWidget(titleBar_);
