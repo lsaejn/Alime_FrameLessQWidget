@@ -44,6 +44,7 @@ bool Alime_TransparentWidget::nativeEvent(const QByteArray& eventType, void* mes
     }
     break;
     case WM_NCHITTEST:
+        //auto x=this->
         int xPos = GET_X_LPARAM(msg->lParam) - this->frameGeometry().x();
         int yPos = GET_Y_LPARAM(msg->lParam) - this->frameGeometry().y();
         if (xPos < boundaryWidth_ && yPos < boundaryWidth_) 

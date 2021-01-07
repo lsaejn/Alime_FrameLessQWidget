@@ -36,5 +36,6 @@ private:
     QPushButton* closeButton_;
     WindowStateChangeCallback maxStateCallback_;
     WindowStateChangeCallback normalStateCallback_;
-    bool IsNcPressing_;
+    bool IsLeftMousePressing_;
+    unsigned long long leftMousePressTick = -1;
 };

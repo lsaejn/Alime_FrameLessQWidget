@@ -31,7 +31,7 @@ public:
 
 Alime_TitleBar::Alime_TitleBar(QWidget* parent)
     : QWidget(parent),
-    IsNcPressing_(false)
+    IsLeftMousePressing_(false)
 {
     setMouseTracking(true);
     setAttribute(Qt::WA_StyledBackground, true);
@@ -75,11 +75,10 @@ void Alime_TitleBar::mousePressEvent(QMouseEvent* event)
     
     if (ReleaseCapture() && event->button()== Qt::LeftButton)
     {
-        IsNcPressing_ = true;
-        static ULONGLONG lastClick = -1;
+        IsLeftMousePressing_ = true;
         ULONGLONG thisClick = GetTickCount64();
-        ULONGLONG interval = thisClick - lastClick;
-        lastClick = thisClick;
+        ULONGLONG interval = thisClick - leftMousePressTick;
+        leftMousePressTick = thisClick;
         if (interval < 200)
         {
             emit maximizeButton_->clicked();
@@ -92,7 +91,7 @@ void Alime_TitleBar::mousePressEvent(QMouseEvent* event)
 
 void Alime_TitleBar::mouseMoveEvent(QMouseEvent* event)
 {
-    if (IsNcPressing_)
+    if (IsLeftMousePressing_)
     {
         PostMessage(HWND(this->window()->winId()), WM_NCLBUTTONDOWN, HTCAPTION, 0);
     }
@@ -104,11 +103,11 @@ void Alime_TitleBar::mouseReleaseEvent(QMouseEvent* event)
 #ifdef Q_OS_WIN
     if (event->button() != Qt::LeftButton)
         return;
-    if (IsNcPressing_ )
+    if (IsLeftMousePressing_)
     {
         event->ignore();
     }
-    IsNcPressing_ = false;
+    IsLeftMousePressing_ = false;
 
 #else
 #endif
@@ -181,7 +180,7 @@ void Alime_TitleBar::onClicked()
 
 void Alime_TitleBar::updateMaximize()
 {
-    if (IsNcPressing_)
+    if (IsLeftMousePressing_)
     {
         normalStateCallback_();
         return;
@@ -207,8 +206,8 @@ void Alime_TitleBar::updateMaximize()
 void Alime_TitleBar::InitPushButton()
 {
     Alime_TitlePushButton::InitPushButton(minimizeButton_, ":/images/min.png", "Minimize", "minimizeButton", 40, 24);
-    Alime_TitlePushButton::InitPushButton(maximizeButton_, ":/images/max.png", "Maximize", "maximizeButton", 40, 24);
-    Alime_TitlePushButton::InitPushButton(closeButton_, ":/images/close.png", "Close", "closeButton", 40, 24);
+    Alime_TitlePushButton::InitPushButton(maximizeButton_, ":/images/max.png", "Maximize", "maximizeButton", 40, 28);
+    Alime_TitlePushButton::InitPushButton(closeButton_, ":/images/close.png", "Close", "closeButton", 40, 26);
 
     connect(minimizeButton_, SIGNAL(clicked(bool)), this, SLOT(onClicked()));
     connect(maximizeButton_, SIGNAL(clicked(bool)), this, SLOT(onClicked()));

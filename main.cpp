@@ -6,6 +6,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    
 
     QFile qssfile(":/qss/dark.qss");
     qssfile.open(QFile::ReadOnly);
